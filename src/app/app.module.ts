@@ -1,5 +1,5 @@
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { BrowserModule,provideClientHydration } from "@angular/platform-browser";
+import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
 import { HttpClientModule } from "@angular/common/http";
 import { GetuserComponent } from './getuser/getuser.component';
@@ -9,6 +9,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { NgxSkeletonLoaderModule } from "ngx-skeleton-loader";
 
 @NgModule({
   declarations: [
@@ -22,13 +23,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     BrowserAnimationsModule,
     NoopAnimationsModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NgxSkeletonLoaderModule
   ],
   providers: [
-    provideClientHydration(),
     provideAnimationsAsync(),
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+
 })
 export class AppModule { }
+

@@ -24,7 +24,8 @@ interface Repository
 @Component({
   selector: 'app-getuser',
   templateUrl: './getuser.component.html',
-  styleUrls: ['./getuser.component.scss']
+  styleUrls: ['./getuser.component.scss'],
+  host: {ngSkipHydration: 'true'},
 })
 
 export class GetuserComponent
@@ -38,6 +39,8 @@ export class GetuserComponent
   repositoriesPerPage: number = 10;
   totalPages: number = 0;
   totalPageArray: number[] = [];
+  private cache: { [key: string]: any } = {};
+  perPageOptions: number[] = [10, 20, 50, 100];
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
@@ -53,10 +56,21 @@ export class GetuserComponent
       return;
     }
 
-    const apiUrl = `https://api.github.com/users/${this.username}`;
-    const headers = new HttpHeaders().set('Authorization','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');
+    if (this.cache[this.username])
+    {
+      // If data exists in cache, use cached data
+      this.userData = this.cache[this.username].userData;
+      this.userAvatarUrl = this.cache[this.username].userAvatarUrl;
+      this.repositories = this.cache[this.username].repositories;
+      this.currentPage = 1;
+      this.calculateTotalPages();
+      return;
+    }
 
-    this.http.get<User>(apiUrl, {headers}).pipe(
+    const apiUrl = `https://api.github.com/users/${this.username}`;
+    const headers = new HttpHeaders().set('Authorization', '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');
+
+    this.http.get<User>(apiUrl, { headers }).pipe(
       catchError((error) => {
         console.error('Error fetching user data:', error);
         const config = new MatSnackBarConfig();
@@ -76,6 +90,11 @@ export class GetuserComponent
         console.log('Bio:', this.userData.bio);
         console.log('Location:', this.userData.location);
         console.log('Twitter Account:', this.userData.twitter_username);
+        this.cache[this.username] = {
+          userData: this.userData,
+          userAvatarUrl: this.userAvatarUrl,
+          repositories: this.repositories
+        };
       }
     });
   }
@@ -83,7 +102,7 @@ export class GetuserComponent
   getUserRepositories()
   {
     const apiUrl = `https://api.github.com/users/${this.username}/repos`;
-    const headers = new HttpHeaders().set('Authorization','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');
+    const headers = new HttpHeaders().set('Authorization', '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');
 
     let allRepositories: Repository[] = [];
     let page = 1;
@@ -101,6 +120,7 @@ export class GetuserComponent
           this.repositories = allRepositories;
           this.calculateTotalPages();
           console.log('User Repositories:', this.repositories);
+          this.cache[this.username].repositories = this.repositories;
         }
         else
         {
@@ -114,6 +134,11 @@ export class GetuserComponent
     fetchRepositories();
   }
 
+  updateRepositoriesPerPage()
+  {
+    this.repositoriesPerPage = Math.min(Math.max(this.repositoriesPerPage, 10), 100);
+    this.calculateTotalPages();
+  }
 
   calculateTotalPages()
   {
@@ -148,4 +173,5 @@ export class GetuserComponent
   }
 
 }
+
 

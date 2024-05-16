@@ -45,8 +45,8 @@
         <p>{{ userData.location }}</p>
       </div>
       <p *ngIf="userData.twitter_username">Twitter : {{ userData.twitter_username }}</p>
-
     </div>
+
   </div>
 
     <!-- Repositories Section -->
@@ -213,7 +213,16 @@
     </table>
   </div>
 
+  <div class="flex items-center justify-center m-4"  *ngIf="userData">
+    <label for="reposPerPage"  class="text-blue-500 mr-2">Repos per Page:</label>
+    <select id="reposPerPage" [(ngModel)]="repositoriesPerPage"
+             (change)="updateRepositoriesPerPage()"
+             class="border border-blue-500 p-2 rounded-md bg-white text-blue-500">
+      <option *ngFor="let option of perPageOptions" [value]="option">{{ option }}</option>
+    </select>
+  </div>
+
 
     <!-- AN ENDING BAR -->
-  <div  *ngIf="userData" class="w-full h-2 bg-blue-400 animate-pulse">
+  <div *ngIf="userData" class="w-full h-2 bg-blue-400 animate-pulse">
   </div>
