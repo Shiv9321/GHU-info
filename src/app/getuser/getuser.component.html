@@ -1,0 +1,205 @@
+  <!-- Search Bar Section -->
+  <div class="flex justify-center mt-10">
+    <div class="w-full max-w-sm bg-gray-300 rounded-lg shadow-sm overflow-hidden">
+      <div class="flex items-center px-4 py-2">
+
+        <input type="text"  [(ngModel)]="username" (keydown.enter)="searchUser()"
+               class="w-full px-3 py-2 text-gray-700 border rounded-none
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Enter GitHub Username" id="search-bar-input-id">
+        <button type="button" (click)="searchUser()"
+                class="ml-2 px-3 py-2 text-sm text-indigo-600 font-medium rounded
+                       hover:bg-indigo-100 focus:outline-none focus:ring-2
+                       focus:ring-indigo-500">
+          <i class="fas fa-search"></i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+    <!-- User Intro Section -->
+  <div *ngIf="userData" class="flex justify-start mt-4 w-1/2 ml-20">
+    <div class="flex flex-col items-center justify-center">
+      <div class="border-2 border-gray-400 rounded-full p-0.5" style="width: 200px">
+
+        <img *ngIf="userAvatarUrl" [src]="userAvatarUrl" alt="User Avatar"
+             style="width: 200px; height: 200px;" class="rounded-full">
+
+      </div>
+      <div class="mt-4">
+
+        <i class="fas fa-link"></i>
+        <a [href]="'https://github.com/'+username" target="_blank">
+          https://github.com/{{username}}
+        </a>
+
+      </div>
+    </div>
+    <div class="ml-40">
+
+      <h2>{{ userData.name }}</h2>
+      <p>{{ userData.bio }}</p>
+      <div class="flex flex-row">
+        <i class="fas fa-map-marker-alt text-gray-600 mt-0.5 mr-2"></i>
+        <p>{{ userData.location }}</p>
+      </div>
+      <p *ngIf="userData.twitter_username">Twitter : {{ userData.twitter_username }}</p>
+
+    </div>
+  </div>
+
+    <!-- Repositories Section -->
+  <div class="container mx-auto mt-10">
+    <ul class="w-full">
+      <ng-container *ngFor="let repo of getCurrentPageRepositories(); let i = index">
+        <li *ngIf="i % 2 === 0" class="py-2 px-1 flex justify-evenly items-center">
+          <span class="border border-black px-3 py-3 w-72 h-40 overflow-auto rounded">
+
+            <div class="font-semibold">{{ repo.name }}</div>
+            <p>{{ repo.description }}</p>
+            <p class="rounded bg-blue-500 text-white font-bold px-2 inline-block">
+              {{ repo.language }}
+            </p>
+
+          </span>
+          <ng-container *ngIf="getCurrentPageRepositories()[i + 1]">
+            <span class="border border-black px-3 py-3 w-72 h-40  overflow-auto rounded">
+
+              <div class="font-semibold">
+                {{ getCurrentPageRepositories()[i + 1].name }}
+              </div>
+              <p>
+                {{ getCurrentPageRepositories()[i + 1].description }}
+              </p>
+              <p class="rounded bg-blue-500 text-white font-bold px-2 inline-block">
+                {{ getCurrentPageRepositories()[i + 1].language }}
+              </p>
+
+            </span>
+          </ng-container>
+          <ng-container *ngIf="i === getCurrentPageRepositories().length - 1 && getCurrentPageRepositories().length % 2 !== 0">
+            <div class="border border-black px-3 py-3 w-72 h-40 rounded"></div>
+          </ng-container>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+
+    <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination flex items-center justify-center mt-6 mb-6">
+    <table class="table-auto border border-black">
+      <tr>
+        <!-- Previous Button -->
+        <td class="p-3 border border-black">
+          <button class="flex items-center" (click)="prevPage()" [disabled]="currentPage === 1">
+            <div class="relative group">
+              <i class="fas fa-chevron-left text-blue-400"></i>
+              <i class="fas fa-chevron-left text-blue-400"></i>
+              <span class="text-blue-500 absolute top-full text-lg right-1/2 transform -translate-y-12 opacity-0 transition duration-200 group-hover:opacity-100">
+                Previous
+              </span>
+            </div>
+          </button>
+        </td>
+
+        <!-- Page Numbers -->
+        <ng-container *ngIf="totalPages <= 10; else ellipsis">
+          <ng-container *ngFor="let page of totalPageArray">
+            <td class="p-3 border border-black"
+                [class.bg-blue-400]="currentPage === page"
+                [class.border-blue-400]="currentPage === page">
+              <button class="text-center font-bold text-blue-400"
+                      [class.font-bold]="currentPage !== page"
+                      [class.text-white]="currentPage === page"
+                      (click)="currentPage = page">
+                {{ page }}
+              </button>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <!-- Ellipsis for More Than 10 Pages -->
+        <ng-template #ellipsis>
+          <ng-container *ngIf="currentPage <= 5; else midEllipsis">
+            <ng-container *ngFor="let page of totalPageArray.slice(0, 6)">
+              <td class="p-3 border border-black"
+                  [class.bg-blue-400]="currentPage === page"
+                  [class.border-blue-400]="currentPage === page">
+                <button class="text-center font-bold text-blue-400"
+                        [class.font-bold]="currentPage !== page"
+                        [class.text-white]="currentPage === page"
+                        (click)="currentPage = page">
+                  {{ page }}
+                </button>
+              </td>
+            </ng-container>
+            <td class="p-3 border border-black">...</td>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = totalPages - 1">
+                {{ totalPages - 1 }}
+              </button>
+            </td>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = totalPages">
+                {{ totalPages }}
+              </button>
+            </td>
+          </ng-container>
+          <ng-template #midEllipsis>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = 1">
+                1
+              </button>
+            </td>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = 2">
+                2
+              </button>
+            </td>
+            <td class="p-3 border border-black">...</td>
+            <ng-container *ngFor="let page of totalPageArray.slice(currentPage - 2, currentPage + 3)">
+              <td class="p-3 border border-black"
+                  [class.bg-blue-400]="currentPage === page"
+                  [class.border-blue-400]="currentPage === page">
+                <button class="text-center font-bold text-blue-400"
+                        [class.font-bold]="currentPage !== page"
+                        [class.text-white]="currentPage === page"
+                        (click)="currentPage = page">
+                  {{ page }}
+                </button>
+              </td>
+            </ng-container>
+            <td class="p-3 border border-black">...</td>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = totalPages - 1">
+                {{ totalPages - 1 }}
+              </button>
+            </td>
+            <td class="p-3 border border-black">
+              <button class="text-center font-bold text-blue-400" (click)="currentPage = totalPages">
+                {{ totalPages }}
+              </button>
+            </td>
+          </ng-template>
+        </ng-template>
+
+        <!-- Next Button -->
+        <td class="p-3 border border-black">
+          <button class="flex items-center" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            <div class="relative group">
+              <i class="fas fa-chevron-right text-blue-400"></i>
+              <i class="fas fa-chevron-right text-blue-400"></i>
+              <span class="text-blue-500 absolute top-full text-lg left-1/2 transform -translate-y-12 opacity-0 transition duration-200 group-hover:opacity-100">
+                Next
+              </span>
+            </div>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+    <!-- AN ENDING BAR -->
+  <div  *ngIf="userData" class="w-full h-2 bg-blue-400">
+  </div>

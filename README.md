@@ -41,3 +41,9 @@ Run `ng serve` for a dev server. Navigate to http://localhost:4200/. The app wil
 
 Visit the [Angular Documentation](https://angular.io/guide/styleguide) to learn more.
 Styling is to be strictly done with [Tailwind](https://tailwindcss.com/docs/installation).
+
+## unit test
+
+test with ng test are successful for 1component and the 1service provided.
+
+

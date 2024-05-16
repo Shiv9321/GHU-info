@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
 import { ApiService } from './services/api.service';
+import {  Component, OnInit,} from "@angular/core";
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,9 @@ import { ApiService } from './services/api.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
+
+  title = 'fyle-frontend-challenge';
+
   constructor(
     private apiService: ApiService
   ) {}
