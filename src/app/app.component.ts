@@ -6,15 +6,29 @@ import {  Component, OnInit,} from "@angular/core";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnInit{
 
   title = 'fyle-frontend-challenge';
 
-  constructor(
+  constructor
+  (
     private apiService: ApiService
   ) {}
 
-  ngOnInit() {
-    this.apiService.getUser('johnpapa').subscribe(console.log);
+  showPopup = true;
+
+  ngOnInit()
+  {
+    setTimeout(() =>
+    {
+      this.closePopup();
+    }, 2000);
   }
+
+  closePopup()
+  {
+    this.showPopup = false;
+  }
+
 }

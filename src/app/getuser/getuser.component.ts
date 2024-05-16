@@ -4,7 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-interface User {
+interface User
+{
   name: string;
   bio: string;
   location: string;
@@ -13,7 +14,8 @@ interface User {
   username: string;
 }
 
-interface Repository {
+interface Repository
+{
   name: string;
   description: string;
   language: string;
@@ -39,8 +41,10 @@ export class GetuserComponent
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
-  searchUser() {
-    if (this.username.trim() === '') {
+  searchUser()
+  {
+    if (this.username.trim() === '')
+    {
       const config = new MatSnackBarConfig();
       config.duration = 3000;
       config.verticalPosition = 'top';
@@ -76,15 +80,14 @@ export class GetuserComponent
     });
   }
 
-  getUserRepositories() {
+  getUserRepositories()
+  {
     const apiUrl = `https://api.github.com/users/${this.username}/repos`;
     const headers = new HttpHeaders().set('Authorization','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');
 
-    // Variables to store all repositories
     let allRepositories: Repository[] = [];
     let page = 1;
 
-    // Define a function to fetch repositories recursively until no more pages are available
     const fetchRepositories = () => {
       const pageUrl = `${apiUrl}?page=${page}`;
       this.http.get<Repository[]>(pageUrl, { headers }).pipe(
@@ -93,51 +96,56 @@ export class GetuserComponent
           return of([]);
         })
       ).subscribe((response) => {
-        // If response is empty, stop fetching
-        if (response.length === 0) {
-          // Assign all repositories fetched to the class property
+        if (response.length === 0)
+        {
           this.repositories = allRepositories;
-          this.calculateTotalPages(); // Calculate total pages
+          this.calculateTotalPages();
           console.log('User Repositories:', this.repositories);
-        } else {
-          // If response is not empty, append to the allRepositories array and increment page number
+        }
+        else
+        {
           allRepositories = allRepositories.concat(response);
           page++;
-          // Fetch next page
           fetchRepositories();
         }
       });
     };
 
-    // Start fetching repositories
     fetchRepositories();
   }
 
 
-  calculateTotalPages() {
+  calculateTotalPages()
+  {
     this.totalPages = Math.ceil(this.repositories.length / this.repositoriesPerPage);
     console.log('Total Pages:', this.totalPages);
     this.totalPageArray = Array.from({ length: this.totalPages }, (_, index) => index + 1);
   }
 
-  prevPage() {
-    if (this.currentPage > 1) {
+  prevPage()
+  {
+    if (this.currentPage > 1)
+    {
       this.currentPage--;
-      console.log('Current Page:', this.currentPage);
+      console.log('previous Page:', this.currentPage);
     }
   }
 
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
+  nextPage()
+  {
+    if (this.currentPage < this.totalPages)
+    {
       this.currentPage++;
-      console.log('Current Page:', this.currentPage);
+      console.log('next Page:', this.currentPage);
     }
   }
 
-  getCurrentPageRepositories(): Repository[] {
+  getCurrentPageRepositories(): Repository[]
+  {
     const startIndex = (this.currentPage - 1) * this.repositoriesPerPage;
     const endIndex = startIndex + this.repositoriesPerPage;
     return this.repositories.slice(startIndex, endIndex);
   }
+
 }
 
