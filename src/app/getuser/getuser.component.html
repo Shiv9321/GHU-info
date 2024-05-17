@@ -1,9 +1,7 @@
-  <!-- Search Bar Section -->
   <div class="flex justify-center mt-10">
     <div class="w-full max-w-sm bg-gray-300 rounded-lg shadow-sm overflow-hidden">
       <div class="flex items-center px-4 py-2">
-
-        <input type="text"  [(ngModel)]="username" (keydown.enter)="searchUser()"
+        <input type="text" [(ngModel)]="username" (keydown.enter)="searchUser()"
                class="w-full px-3 py-2 text-gray-700 border rounded-none
                       focus:outline-none focus:ring-2 focus:ring-indigo-500"
                placeholder="Enter GitHub Username" id="search-bar-input-id">
@@ -13,81 +11,90 @@
                        focus:ring-indigo-500">
           <i class="fas fa-search"></i>
         </button>
-
       </div>
     </div>
   </div>
 
-    <!-- User Intro Section -->
-  <div *ngIf="userData" class="flex justify-start mt-4 w-1/2 ml-20">
-    <div class="flex flex-col items-center justify-center">
-      <div class="border-2 border-gray-400 rounded-full p-0.5" style="width: 200px">
-
-        <img *ngIf="userAvatarUrl" [src]="userAvatarUrl" alt="User Avatar"
-             style="width: 200px; height: 200px;" class="rounded-full">
-
-      </div>
-      <div class="mt-4">
-
-        <i class="fas fa-link"></i>
-        <a [href]="'https://github.com/'+username" target="_blank">
-          https://github.com/{{username}}
-        </a>
-
-      </div>
-    </div>
-    <div class="ml-40">
-
-      <h2>{{ userData.name }}</h2>
-      <p>{{ userData.bio }}</p>
-      <div class="flex flex-row">
-        <i class="fas fa-map-marker-alt text-gray-600 mt-0.5 mr-2"></i>
-        <p>{{ userData.location }}</p>
-      </div>
-      <p *ngIf="userData.twitter_username">Twitter : {{ userData.twitter_username }}</p>
-    </div>
-
+  <!-- User Intro Section -->
+  <div *ngIf="isLoading; else userInfo">
+    <ngx-skeleton-loader count="1" appearance="circle"
+                          [theme]="{ width: '200px', height: '200px' }">
+    </ngx-skeleton-loader>
+    <ngx-skeleton-loader count="1" [theme]="{ height: '20px', width: '300px' }">
+    </ngx-skeleton-loader>
+    <ngx-skeleton-loader count="1" [theme]="{ height: '20px', width: '150px' }">
+    </ngx-skeleton-loader>
+    <ngx-skeleton-loader count="1" [theme]="{ height: '20px', width: '250px' }">
+    </ngx-skeleton-loader>
   </div>
+  <ng-template #userInfo>
+    <div *ngIf="userData" class="flex justify-start mt-4 w-1/2 ml-20">
+      <div class="flex flex-col items-center justify-center">
+        <div class="border-2 border-gray-400 rounded-full p-0.5" style="width: 200px">
+          <img *ngIf="userAvatarUrl" [src]="userAvatarUrl" alt="User Avatar"
+               style="width: 200px; height: 200px;" class="rounded-full">
+        </div>
+        <div class="mt-4">
+          <i class="fas fa-link"></i>
+          <a [href]="'https://github.com/'+username" target="_blank">
+            https://github.com/{{username}}
+          </a>
+        </div>
+      </div>
+      <div class="ml-40">
+        <h2>{{ userData.name }}</h2>
+        <p>{{ userData.bio }}</p>
+        <div class="flex flex-row">
+          <i class="fas fa-map-marker-alt text-gray-600 mt-0.5 mr-2"></i>
+          <p>{{ userData.location }}</p>
+        </div>
+        <p *ngIf="userData.twitter_username">Twitter : {{ userData.twitter_username }}</p>
+      </div>
+    </div>
+  </ng-template>
 
-    <!-- Repositories Section -->
-  <div class="container mx-auto mt-10">
-    <ul class="w-full">
-      <ng-container *ngFor="let repo of getCurrentPageRepositories(); let i = index">
-        <li *ngIf="i % 2 === 0" class="py-2 px-1 flex justify-evenly items-center">
-          <span class="border border-black px-3 py-3 w-72 h-40 overflow-auto rounded">
-
-            <div class="font-semibold">{{ repo.name }}</div>
-            <p>{{ repo.description }}</p>
-            <p class="rounded bg-blue-500 text-white font-bold px-2 inline-block">
-              {{ repo.language }}
-            </p>
-
-          </span>
-          <ng-container *ngIf="getCurrentPageRepositories()[i + 1]">
-            <span class="border border-black px-3 py-3 w-72 h-40  overflow-auto rounded">
-
-              <div class="font-semibold">
-                {{ getCurrentPageRepositories()[i + 1].name }}
-              </div>
-              <p>
-                {{ getCurrentPageRepositories()[i + 1].description }}
-              </p>
+  <!-- Repositories Section -->
+  <div *ngIf="isReposLoading; else repoInfo" class="container mx-auto mt-10">
+    <ngx-skeleton-loader count="5"
+                          [theme]="{ height: '100px', width: '100%', margin: '10px 0' }">
+    </ngx-skeleton-loader>
+  </div>
+  <ng-template #repoInfo>
+    <div class="container mx-auto mt-10">
+      <ul class="w-full">
+        <ng-container *ngFor="let repo of getCurrentPageRepositories(); let i = index">
+          <li *ngIf="i % 2 === 0" class="py-2 px-1 flex justify-evenly items-center">
+            <span class="border border-black px-3 py-3 w-72 h-40 overflow-auto rounded">
+              <div class="font-semibold">{{ repo.name }}</div>
+              <p>{{ repo.description }}</p>
               <p class="rounded bg-blue-500 text-white font-bold px-2 inline-block">
-                {{ getCurrentPageRepositories()[i + 1].language }}
+                {{ repo.language }}
               </p>
-
             </span>
-          </ng-container>
-          <ng-container *ngIf="i === getCurrentPageRepositories().length - 1 &&
-                                    getCurrentPageRepositories().length % 2 !== 0">
-            <div class="border border-black px-3 py-3 w-72 h-40 rounded"></div>
-          </ng-container>
-        </li>
-      </ng-container>
-    </ul>
+            <ng-container *ngIf="getCurrentPageRepositories()[i + 1]">
+              <span class="border border-black px-3 py-3 w-72 h-40 overflow-auto rounded">
+                <div class="font-semibold">
+                  {{ getCurrentPageRepositories()[i + 1].name }}
+                </div>
+                <p>
+                  {{ getCurrentPageRepositories()[i + 1].description }}
+                </p>
+                <p class="rounded bg-blue-500 text-white font-bold px-2 inline-block">
+                  {{ getCurrentPageRepositories()[i + 1].language }}
+                </p>
+              </span>
+            </ng-container>
+            <ng-container *ngIf="i === getCurrentPageRepositories().length - 1 &&
+                                      getCurrentPageRepositories().length % 2 !== 0">
+              <div class="border border-black px-3 py-3 w-72 h-40 rounded"></div>
+            </ng-container>
+          </li>
+        </ng-container>
+      </ul>
     </div>
+  </ng-template>
 
-    <!-- Pagination -->
+  <!-- Pagination -->
   <div *ngIf="userData" class="pagination flex items-center justify-center mt-6 mb-6">
     <table class="table-auto border border-black">
       <tr>
@@ -213,16 +220,15 @@
     </table>
   </div>
 
-  <div class="flex items-center justify-center m-4"  *ngIf="userData">
-    <label for="reposPerPage"  class="text-blue-500 mr-2">Repos per Page:</label>
+  <div class="flex items-center justify-center m-4" *ngIf="userData">
+    <label for="reposPerPage" class="text-blue-500 mr-2">Repos per Page:</label>
     <select id="reposPerPage" [(ngModel)]="repositoriesPerPage"
-             (change)="updateRepositoriesPerPage()"
-             class="border border-blue-500 p-2 rounded-md bg-white text-blue-500">
+            (change)="updateRepositoriesPerPage()"
+            class="border border-blue-500 p-2 rounded-md bg-white text-blue-500">
       <option *ngFor="let option of perPageOptions" [value]="option">{{ option }}</option>
     </select>
   </div>
 
-
-    <!-- AN ENDING BAR -->
+  <!-- AN ENDING BAR -->
   <div *ngIf="userData" class="w-full h-2 bg-blue-400 animate-pulse">
   </div>

@@ -25,7 +25,7 @@ interface Repository
   selector: 'app-getuser',
   templateUrl: './getuser.component.html',
   styleUrls: ['./getuser.component.scss'],
-  host: {ngSkipHydration: 'true'},
+  host: { ngSkipHydration: 'true' },
 })
 
 export class GetuserComponent
@@ -41,6 +41,8 @@ export class GetuserComponent
   totalPageArray: number[] = [];
   private cache: { [key: string]: any } = {};
   perPageOptions: number[] = [10, 20, 50, 100];
+  isLoading: boolean = false;
+  isReposLoading: boolean = false;
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
@@ -67,6 +69,7 @@ export class GetuserComponent
       return;
     }
 
+    this.isLoading = true;
     const apiUrl = `https://api.github.com/users/${this.username}`;
     const headers = new HttpHeaders().set('Authorization', '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');
 
@@ -78,18 +81,16 @@ export class GetuserComponent
         config.verticalPosition = 'top';
         config.panelClass = ['indigo-pink'];
         this.snackBar.open('Username not found', 'Close', config);
+        this.isLoading = false;
         return of(null);
       })
     ).subscribe((response) => {
+      this.isLoading = false;
       if (response) {
         this.userData = response;
         this.userAvatarUrl = response.avatar_url;
         this.getUserRepositories();
         this.currentPage = 1;
-        console.log('Name:', this.userData.name);
-        console.log('Bio:', this.userData.bio);
-        console.log('Location:', this.userData.location);
-        console.log('Twitter Account:', this.userData.twitter_username);
         this.cache[this.username] = {
           userData: this.userData,
           userAvatarUrl: this.userAvatarUrl,
@@ -101,6 +102,7 @@ export class GetuserComponent
 
   getUserRepositories()
   {
+    this.isReposLoading = true;
     const apiUrl = `https://api.github.com/users/${this.username}/repos`;
     const headers = new HttpHeaders().set('Authorization', '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');
 
@@ -119,7 +121,7 @@ export class GetuserComponent
         {
           this.repositories = allRepositories;
           this.calculateTotalPages();
-          console.log('User Repositories:', this.repositories);
+          this.isReposLoading = false;
           this.cache[this.username].repositories = this.repositories;
         }
         else
@@ -143,7 +145,6 @@ export class GetuserComponent
   calculateTotalPages()
   {
     this.totalPages = Math.ceil(this.repositories.length / this.repositoriesPerPage);
-    console.log('Total Pages:', this.totalPages);
     this.totalPageArray = Array.from({ length: this.totalPages }, (_, index) => index + 1);
   }
 
@@ -152,7 +153,6 @@ export class GetuserComponent
     if (this.currentPage > 1)
     {
       this.currentPage--;
-      console.log('previous Page:', this.currentPage);
     }
   }
 
@@ -161,7 +161,6 @@ export class GetuserComponent
     if (this.currentPage < this.totalPages)
     {
       this.currentPage++;
-      console.log('next Page:', this.currentPage);
     }
   }
 
@@ -173,5 +172,3 @@ export class GetuserComponent
   }
 
 }
-
-
