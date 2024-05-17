@@ -60,7 +60,6 @@ export class GetuserComponent
 
     if (this.cache[this.username])
     {
-      // If data exists in cache, use cached data
       this.userData = this.cache[this.username].userData;
       this.userAvatarUrl = this.cache[this.username].userAvatarUrl;
       this.repositories = this.cache[this.username].repositories;
@@ -140,6 +139,7 @@ export class GetuserComponent
   {
     this.repositoriesPerPage = Math.min(Math.max(this.repositoriesPerPage, 10), 100);
     this.calculateTotalPages();
+    this.currentPage = 1;
   }
 
   calculateTotalPages()
