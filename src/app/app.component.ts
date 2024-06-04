@@ -8,9 +8,10 @@ import {  Component, OnInit,} from "@angular/core";
   host: {ngSkipHydration: 'true'},
 })
 
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit
+{
 
-  title = 'fyle-frontend-challenge';
+  title = 'ghu-info';
 
   constructor
   (

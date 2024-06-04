@@ -33,5 +33,6 @@ import { NgxSkeletonLoaderModule } from "ngx-skeleton-loader";
   bootstrap: [AppComponent],
 
 })
+
 export class AppModule { }
 

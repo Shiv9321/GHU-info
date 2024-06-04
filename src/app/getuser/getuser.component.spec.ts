@@ -3,24 +3,28 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { GetuserComponent } from './getuser.component';
 import { FormsModule } from '@angular/forms';
 
-describe('GetuserComponent', () => {
+describe('GetuserComponent', () =>
+{
   let component: GetuserComponent;
   let fixture: ComponentFixture<GetuserComponent>;
 
-  beforeEach(async () => {
+  beforeEach(async () =>
+  {
     await TestBed.configureTestingModule({
       declarations: [GetuserComponent],
       imports: [HttpClientTestingModule,FormsModule]
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(() =>
+  {
     fixture = TestBed.createComponent(GetuserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', () =>
+  {
     expect(component).toBeTruthy();
   });
 });
